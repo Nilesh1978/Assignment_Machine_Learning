@@ -1,0 +1,28 @@
+---
+title: "Assignment on **Classe** prediction"
+author: "Nilesh Dighe"
+date: "March 23, 2015"
+output: html_document
+---
+
+*This is part of the Coursera assignment on "Classe" predictions:*
+  **Data read using read.csv command**
+  **Convert _#DIV/0!_ to _NA_**
+
+```{r echo=FALSE}
+setwd("C:/Users/NNDIGH/Desktop/coursera/Machine Learning/Home Work/Machine Learning_HW")
+library(ggplot2)
+library(caret)
+library(randomForest)
+trainset<- read.csv("pml-training.csv", na.strings=c("NA", "#DIV/0!"))
+testset<- read.csv("pml-testing.csv", na.strings=c("NA", "#DIV/0!"))
+dim(trainset)
+dim(testset)
+```
+
+*Removing columns with "NA" values
+```{r echo=FALSE}
+train1<- trainset[,colSums(is.na(trainset)) <2]
+dim(train1)
+```
+
