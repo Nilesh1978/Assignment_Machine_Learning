@@ -169,9 +169,9 @@ modelFit5</code></pre>
 ## Resampling results across tuning parameters:
 ## 
 ##   mtry  Accuracy   Kappa      Accuracy SD   Kappa SD    
-##    2    0.9974736  0.9968036  0.0007521460  0.0009509485
-##   11    0.9985406  0.9981537  0.0005997263  0.0007569033
-##   20    0.9967981  0.9959496  0.0016803661  0.0021226593
+##    2    0.9973644  0.9966659  0.0005526085  0.0006979543
+##   11    0.9985826  0.9982071  0.0006454167  0.0008156832
+##   20    0.9972536  0.9965260  0.0012359040  0.0015620828
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 11.</code></pre>
@@ -180,44 +180,44 @@ modelFit5</code></pre>
 table(pred,testing3$classe)</code></pre>
 <pre><code>##     
 ## pred    A    B    C    D    E
-##    A 1395    0    0    0    0
-##    B    0  949    1    0    0
-##    C    0    0  854    0    0
-##    D    0    0    0  804    0
-##    E    0    0    0    0  901</code></pre>
+##    A 1395    3    0    0    0
+##    B    0  946    1    0    0
+##    C    0    0  854    1    0
+##    D    0    0    0  803    2
+##    E    0    0    0    0  899</code></pre>
 <p><em>run confusion matrix function</em></p>
 <pre class="r"><code>confusionMatrix(pred, testing3$classe)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    A    B    C    D    E
-##          A 1395    0    0    0    0
-##          B    0  949    1    0    0
-##          C    0    0  854    0    0
-##          D    0    0    0  804    0
-##          E    0    0    0    0  901
+##          A 1395    3    0    0    0
+##          B    0  946    1    0    0
+##          C    0    0  854    1    0
+##          D    0    0    0  803    2
+##          E    0    0    0    0  899
 ## 
 ## Overall Statistics
-##                                      
-##                Accuracy : 0.9998     
-##                  95% CI : (0.9989, 1)
-##     No Information Rate : 0.2845     
-##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
-##                                      
-##                   Kappa : 0.9997     
-##  Mcnemar's Test P-Value : NA         
+##                                           
+##                Accuracy : 0.9986          
+##                  95% CI : (0.9971, 0.9994)
+##     No Information Rate : 0.2845          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.9982          
+##  Mcnemar's Test P-Value : NA              
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: A Class: B Class: C Class: D Class: E
-## Sensitivity            1.0000   1.0000   0.9988   1.0000   1.0000
-## Specificity            1.0000   0.9997   1.0000   1.0000   1.0000
-## Pos Pred Value         1.0000   0.9989   1.0000   1.0000   1.0000
-## Neg Pred Value         1.0000   1.0000   0.9998   1.0000   1.0000
+## Sensitivity            1.0000   0.9968   0.9988   0.9988   0.9978
+## Specificity            0.9991   0.9997   0.9998   0.9995   1.0000
+## Pos Pred Value         0.9979   0.9989   0.9988   0.9975   1.0000
+## Neg Pred Value         1.0000   0.9992   0.9998   0.9998   0.9995
 ## Prevalence             0.2845   0.1935   0.1743   0.1639   0.1837
-## Detection Rate         0.2845   0.1935   0.1741   0.1639   0.1837
-## Detection Prevalence   0.2845   0.1937   0.1741   0.1639   0.1837
-## Balanced Accuracy      1.0000   0.9999   0.9994   1.0000   1.0000</code></pre>
+## Detection Rate         0.2845   0.1929   0.1741   0.1637   0.1833
+## Detection Prevalence   0.2851   0.1931   0.1743   0.1642   0.1833
+## Balanced Accuracy      0.9996   0.9983   0.9993   0.9991   0.9989</code></pre>
 <p><em>make prediction in the testset and place results in table and vectors</em></p>
 <pre class="r"><code>predict_test&lt;- predict(modelFit5,testset)
 predict_test[1:20]</code></pre>
