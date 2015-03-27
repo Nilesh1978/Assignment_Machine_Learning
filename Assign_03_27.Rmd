@@ -1,0 +1,69 @@
+---
+title: "Assignment_03_27"
+author: "Nilesh Dighe"
+date: "March 27, 2015"
+output: html_document
+---
+
+
+```{r echo=FALSE}
+setwd("C:/Users/NNDIGH/Desktop/coursera/Machine Learning/Home Work/Machine Learning_HW")
+library(ggplot2)
+library(caret)
+library(randomForest)
+trainset<- read.csv("pml-training.csv", na.strings=c("NA", "#DIV/0!"))
+testset<- read.csv("pml-testing.csv", na.strings=c("NA", "#DIV/0!"))
+dim(trainset)
+dim(testset)
+```
+
+*Removing columns with "NA" values*
+```{r echo=FALSE}
+train1<- trainset[,colSums(is.na(trainset)) <2]
+dim(train1)
+```
+
+*remove columns 1 & 4 from train1 data set*
+```{r}
+train2<- train1[,-1]
+train3<- train2[,-4]
+str(train3)
+dim(train3)
+```
+*change trainControl function as listed below*
+```{r}
+ctrl1 <- trainControl(method = "crossvalidate", number=3, repeats = 3)
+```
+*split data into training and testing sets*
+```{r}
+inTrain3<- createDataPartition(y=train3$classe, p=0.75, list=FALSE)
+training3<- train3[inTrain3,]
+testing3<- train3[-inTrain3,]
+dim(training3); dim(testing3)
+```
+*fine tune model by including top 20 variables obtained via varImp function above*
+```{r}
+modelFit5<- train(classe~ raw_timestamp_part_1 + num_window + roll_belt + pitch_forearm + magnet_dumbbell_z
+                         + yaw_belt + magnet_dumbbell_y + pitch_belt + roll_forearm + accel_dumbbell_y
+                         + roll_dumbbell + accel_belt_z + accel_forearm_x + magnet_dumbbell_x + magnet_belt_y
+                         + total_accel_dumbbell + magnet_belt_z + accel_dumbbell_z + magnet_forearm_z + magnet_arm_x, method="rf", data=training3, trainControl=ctrl1)
+modelFit5
+```
+*run cross validation and print data in table*
+```{r}
+pred<- predict(modelFit5,testing3)
+table(pred,testing3$classe)
+```
+
+
+*run confusion matrix function*
+```{r}
+confusionMatrix(pred, testing3$classe)
+```
+
+*make prediction in the testset and place results in table and vectors*
+```{r}
+predict_test<- predict(modelFit5,testset)
+predict_test[1:20]
+table(predict_test)
+```
