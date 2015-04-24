@@ -1,0 +1,116 @@
+---
+title: "Prediction Model"
+author: "Nilesh Dighe"
+date: "April 24, 2015"
+output: html_document
+---
+
+##Steps taken in building the _classe_ prediction model
+  + Data clean up
+  + Create training and testing sets
+  + Run full model
+  + Identify most important variables
+  + Check for normality of the variables
+  + Fine tune model by only including the important variables
+  + Test model on validation or new testing set
+  + Estimate Accuracy and out of sample error
+
+
+```{r include=FALSE}
+library(ggplot2)
+library(caret)
+library(randomForest)
+library(dplyr)
+trainset<- read.csv("pml-training.csv", na.strings=c("NA", "#DIV/0!"))
+testset<- read.csv("pml-testing.csv", na.strings=c("NA", "#DIV/0!"))
+str(trainset)
+head(trainset)
+dim(trainset)
+train1<- trainset[,colSums(is.na(trainset)) <1]
+dim(train1)
+str(train1)
+train2<- train1[,-1]
+train3<- train2[,-4]
+dim(train3)
+```
+
+*Partition training data set into train and test sets*
+```{r}
+inTrain3<- createDataPartition(y=train3$classe, p=0.75, list=FALSE)
+training3<- train3[inTrain3,]
+testing3<- train3[-inTrain3,]
+dim(training3); dim(testing3)
+```
+
+*Histograms & qqplots*
+
+```{r}
+par(mfrow=c(1,2));hist(training3$raw_timestamp_part_1); qqnorm(training3$raw_timestamp_part_1)
+par(mfrow=c(1,2));hist(training3$num_window); qqnorm(training3$num_window)
+```
+
+
+
+*Change trainControl function as listed below*
+```{r}
+ctrl1 <- trainControl(method = "crossvalidate", number=3, repeats = 3)
+```
+
+
+###Run complete model and identiy top 20 most importnat variables##
+###Full model: modelFit3<- train(classe~ ., method="rf", data=training3, trainControl=ctrl1)
+###Identify top 20 variables using varImp(modelFit3)
+**Variable**        |**Overall**
+--------------------|------
+raw_timestamp_part_1|100.000
+num_window          | 55.406
+roll_belt           | 46.066
+pitch_forearm       | 28.259
+magnet_dumbbell_z   | 21.192
+magnet_dumbbell_y   | 18.707
+yaw_belt            | 17.221
+pitch_belt          | 15.997
+roll_forearm        | 14.042
+accel_dumbbell_y    |  8.576
+roll_dumbbell       |  7.931
+magnet_dumbbell_x   |  6.868
+accel_belt_z        |  6.413
+total_accel_dumbbell|  6.304
+magnet_belt_y       |  5.781
+accel_forearm_x     |  5.655
+magnet_belt_z       |  5.464
+accel_dumbbell_z    |  5.103
+yaw_dumbbell        |  3.142
+gyros_belt_z        |  3.095
+
+*Evaluate variables for trends using featureplot*
+```{r}
+featurePlot(x=training3[c("raw_timestamp_part_1","num_window","roll_belt","pitch_forearm")], y=training3$classe, plot="pairs")
+```
+
+
+###Fine tune model by including top 2 variables obtained via varImp function above###
+
+```{r, warnings=FALSE, message=FALSE}
+modelFit3<- train(classe~ raw_timestamp_part_1 + num_window, method="rf", data=training3, trainControl=ctrl1)
+modelFit3
+```
+
+
+*Run cross validation and print data in table*
+```{r, echo=FALSE}
+pred<- predict(modelFit3,testing3)
+table(pred,testing3$classe)
+```
+
+
+*Run confusion matrix function to estimate accuracy & out of sample error*
+```{r,echo=FALSE}
+cm<- confusionMatrix(pred, testing3$classe)
+cm
+AccuracyStats<- data.frame(cm$overall)
+OutofSampleError<- 1-AccuracyStats[1,1]
+OutofSampleError
+e <- OutofSampleError * 100
+paste0("Out of sample error estimation: ", round(e, digits = 2), "%")
+```
