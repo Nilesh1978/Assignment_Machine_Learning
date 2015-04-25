@@ -1,7 +1,7 @@
 ---
 title: "Prediction Model"
 author: "Nilesh Dighe"
-date: "April 24, 2015"
+date: "April 25, 2015"
 output: html_document
 ---
 
@@ -14,6 +14,7 @@ output: html_document
   + Fine tune model by only including the important variables
   + Test model on validation or new testing set
   + Estimate Accuracy and out of sample error
+  + Make prediction on the test set and submit answers as part of the Coursera submission project
 
 
 ```{r include=FALSE}
@@ -113,4 +114,10 @@ OutofSampleError<- 1-AccuracyStats[1,1]
 OutofSampleError
 e <- OutofSampleError * 100
 paste0("Out of sample error estimation: ", round(e, digits = 2), "%")
+```
+#Make prediction in the testset and place results in table and vectors
+```{r}
+predict_test<- predict(modelFit3,testset)
+predict_test[1:20]
+table(predict_test)
 ```
